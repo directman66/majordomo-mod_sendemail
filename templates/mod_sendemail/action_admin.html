@@ -1,0 +1,134 @@
+<div><div>
+
+
+
+				<h4 class="modal-title">MDM proxy configurator</h4>
+			</div>
+			<div class="modal-body">
+				<div class="float-right">
+
+				</div>
+                <p class="float-left"> Модуль конфигурирования виртуальных хостов для мажордомо.<br>
+				Обсуждение модуля <a href="https://mjdm.ru/forum/viewtopic.php?f=5&t=6673#p106934" target="_blank">здесь</a>.<br>
+
+				</p>
+				<hr size="1">
+				<p class="float-left">
+				
+				<ul>
+                    Тип сервера: [#SERVER#]<br>
+<br>
+
+            update для apache2.conf [#conftext#]:  
+ [#if conftext=="
+<!--7117-->
+"#] <font color="red"><b>не установлен </b><br>
+<pre>
+ Для корректной работы должен быть выполнен следующий код в консоли:<br>[#cmd#]
+</pre>
+</font>
+[#else#] <b>установлен </b> [#endif#]
+<br>
+
+<br>
+                    Установленные модули sudo apachectl -M: <br><pre>
+mod_proxy:  [#if mod_proxy=""#] <font color="red"><b>не установлен </b></font>[#else#] <b>установлен </b> [#endif#]
+mod_proxy_html:  [#if mod_proxy_html=""#] <font color="red"><b>не установлен </b> </font>[#else#] <b>установлен </b> [#endif#]
+mod_proxy_http:  [#if mod_proxy_http=""#] <font color="red"><b>не установлен </b> </font>[#else#] <b>установлен </b> [#endif#]
+mod_rewrite:  [#if mod_rewrite=""#] <font color="red"><b>не установлен </b> </font>[#else#] <b>установлен </b> [#endif#]
+mod_substitute:  [#if mod_substitute=""#] <font color="red"><b>не установлен </b> </font>[#else#] <b>установлен </b> [#endif#]
+mod_proxy_balancer:  [#if mod_proxy_balancer=""#] <font color="red"><b>не установлен </b> </font>[#else#] <b>установлен </b> [#endif#]
+mod_alias:  [#if mod_alias=""#] <font color="red"><b>не установлен </b> </font>[#else#] <b>установлен </b> [#endif#]
+</pre>
+<!--
+                    <li></li>
+                    <li>[#MODULES#]</li>
+    -->
+
+
+				</ul>
+
+
+</p>
+
+				<hr size="1">
+				<ul>
+                    Список доступных файлов конфигурации [#pathaviable#]:<br>
+                    <pre>[#hostsaviable#] </pre>
+				</ul>
+
+				<hr size="1">
+				<ul>
+                    Список активных файлов конфигурации [#pathenable#]:<br>
+                    <pre>[#hostsenable#] </pre>
+				</ul>
+
+				<hr size="1">
+
+
+				<ul>
+<!--<a href="" onclick="runtest()"> Протестировать конфиг [#servertype#]</a>  <br> -->
+Результат тестирования конфигов: <BR>
+[#if TESTCONFIG="Syntax OK" #] <font color="green">[#TESTCONFIG#]</font> <a href="?view_mode=restart_apache" onClick="return confirm('Are you sure? Please confirm.')"> Перезапустить apache2 </a>
+[#else#]
+<font color="red">[#TESTCONFIG#]</font>
+[#endif#]
+<br><br>
+sudo systemctl status apache2: <br>
+<pre>[#state#]</pre>
+				</ul>
+
+				<hr size="1">
+				<ul>
+                    Список виртуальных хостов apachectl -S:<br>
+                    <pre>[#hostlist#] </pre>
+				</ul>
+
+
+				<hr size="1">
+
+<!--
+
+
+<script type="text/javascript">
+    function runtest() {
+
+// clearTimeout(logTimer);
+
+// window.clearTimeout(logTimer);
+//  clearTimeout(deviceRefreshTimer[#ID#]);
+        var url="/ajax/mdmproxy.html?op=testcfg";
+
+        $.ajax({
+            url: url,
+            cache: false,
+            success: function(html){
+                $("#auth_log").html(html);
+            }
+        });
+
+}
+   runtest();
+
+    
+</script>
+
+<div  id="viewlog" tabindex="-1" role="dialog" aria-labelledby="about1" aria-hidden="true" height="100"> 
+
+
+    <div>
+
+
+    <p  id="auth_log" >    </p>
+
+   </div>
+
+</div>
+-->
+
+
+
+			</div>
+
+                </p>			
+
