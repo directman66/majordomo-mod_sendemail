@@ -1,134 +1,78 @@
-<div><div>
+<h3>Форма отправки тестового сообщения</h3>
 
+<!-- Table 'snmpdevices' edit -->
+<form action="?" method="post" enctype="multipart/form-data" name="frmEdit" class="form-horizontal">
+<fieldset>
+<!-- TITLE (varchar) -->
 
-
-				<h4 class="modal-title">MDM proxy configurator</h4>
-			</div>
-			<div class="modal-body">
-				<div class="float-right">
-
-				</div>
-                <p class="float-left"> Модуль конфигурирования виртуальных хостов для мажордомо.<br>
-				Обсуждение модуля <a href="https://mjdm.ru/forum/viewtopic.php?f=5&t=6673#p106934" target="_blank">здесь</a>.<br>
-
-				</p>
-				<hr size="1">
-				<p class="float-left">
-				
-				<ul>
-                    Тип сервера: [#SERVER#]<br>
-<br>
-
-            update для apache2.conf [#conftext#]:  
- [#if conftext=="
-<!--7117-->
-"#] <font color="red"><b>не установлен </b><br>
-<pre>
- Для корректной работы должен быть выполнен следующий код в консоли:<br>[#cmd#]
-</pre>
-</font>
-[#else#] <b>установлен </b> [#endif#]
-<br>
-
-<br>
-                    Установленные модули sudo apachectl -M: <br><pre>
-mod_proxy:  [#if mod_proxy=""#] <font color="red"><b>не установлен </b></font>[#else#] <b>установлен </b> [#endif#]
-mod_proxy_html:  [#if mod_proxy_html=""#] <font color="red"><b>не установлен </b> </font>[#else#] <b>установлен </b> [#endif#]
-mod_proxy_http:  [#if mod_proxy_http=""#] <font color="red"><b>не установлен </b> </font>[#else#] <b>установлен </b> [#endif#]
-mod_rewrite:  [#if mod_rewrite=""#] <font color="red"><b>не установлен </b> </font>[#else#] <b>установлен </b> [#endif#]
-mod_substitute:  [#if mod_substitute=""#] <font color="red"><b>не установлен </b> </font>[#else#] <b>установлен </b> [#endif#]
-mod_proxy_balancer:  [#if mod_proxy_balancer=""#] <font color="red"><b>не установлен </b> </font>[#else#] <b>установлен </b> [#endif#]
-mod_alias:  [#if mod_alias=""#] <font color="red"><b>не установлен </b> </font>[#else#] <b>установлен </b> [#endif#]
-</pre>
-<!--
-                    <li></li>
-                    <li>[#MODULES#]</li>
-    -->
-
-
-				</ul>
-
-
-</p>
-
-				<hr size="1">
-				<ul>
-                    Список доступных файлов конфигурации [#pathaviable#]:<br>
-                    <pre>[#hostsaviable#] </pre>
-				</ul>
-
-				<hr size="1">
-				<ul>
-                    Список активных файлов конфигурации [#pathenable#]:<br>
-                    <pre>[#hostsenable#] </pre>
-				</ul>
-
-				<hr size="1">
-
-
-				<ul>
-<!--<a href="" onclick="runtest()"> Протестировать конфиг [#servertype#]</a>  <br> -->
-Результат тестирования конфигов: <BR>
-[#if TESTCONFIG="Syntax OK" #] <font color="green">[#TESTCONFIG#]</font> <a href="?view_mode=restart_apache" onClick="return confirm('Are you sure? Please confirm.')"> Перезапустить apache2 </a>
-[#else#]
-<font color="red">[#TESTCONFIG#]</font>
-[#endif#]
-<br><br>
-sudo systemctl status apache2: <br>
-<pre>[#state#]</pre>
-				</ul>
-
-				<hr size="1">
-				<ul>
-                    Список виртуальных хостов apachectl -S:<br>
-                    <pre>[#hostlist#] </pre>
-				</ul>
-
-
-				<hr size="1">
-
-<!--
-
-
-<script type="text/javascript">
-    function runtest() {
-
-// clearTimeout(logTimer);
-
-// window.clearTimeout(logTimer);
-//  clearTimeout(deviceRefreshTimer[#ID#]);
-        var url="/ajax/mdmproxy.html?op=testcfg";
-
-        $.ajax({
-            url: url,
-            cache: false,
-            success: function(html){
-                $("#auth_log").html(html);
-            }
-        });
-
-}
-   runtest();
-
-    
-</script>
-
-<div  id="viewlog" tabindex="-1" role="dialog" aria-labelledby="about1" aria-hidden="true" height="100"> 
-
-
-    <div>
-
-
-    <p  id="auth_log" >    </p>
-
-   </div>
-
+<div class="form-group">
+ <label class="control-label"[#if ERR_SMTPSERVER#] style="color:red;font-weight:bold"[#endif#]>
+ smtp server:
+ (*)
+ </label>
+ <div class="controls"><input type="text" name="smtrserver" value="[#SMTPSERVER#]" class="input form-control"></div>
 </div>
--->
 
 
+<div class="form-group">
+ <label class="control-label"[#if ERR_FROM#] style="color:red;font-weight:bold"[#endif#]>
+ from (email):
+ (*)
+ </label>
+ <div class="controls"><input type="text" name="from" value="[#FROM#]" class="input form-control"></div>
+</div>
 
-			</div>
 
-                </p>			
+<div class="form-group">
+ <label class="control-label"[#if ERR_SMTPLOGIN#] style="color:red;font-weight:bold"[#endif#]>
+ smtp login:
+ (*)
+ </label>
+ <div class="controls"><input type="text" name="smtplogin" value="[#SMTPLOGIN#]" class="input form-control"></div>
+</div>
 
+<div class="form-group">
+ <label class="control-label"[#if ERR_SMTPPWD#] style="color:red;font-weight:bold"[#endif#]>
+ smtp pwd:
+ (*)
+ </label>
+ <div class="controls"><input type="text" name="smtppwd" value="[#SMTPPWD#]" class="input form-control"></div>
+</div>
+
+
+<div class="form-group">
+ <label class="control-label"[#if ERR_TO#] style="color:red;font-weight:bold"[#endif#]>
+ to:
+ (*)
+ </label>
+ <div class="controls"><input type="text" name="to" value="[#TO#]" class="input form-control"></div>
+</div>
+
+<div class="form-group">
+ <label class="control-label"[#if ERR_SUBJECT#] style="color:red;font-weight:bold"[#endif#]>
+ subject:
+ (*)
+ </label>
+ <div class="controls"><input type="text" name="subject" value="[#SUBJECT#]" class="input form-control"></div>
+</div>
+
+<div class="form-group">
+ <label class="control-label"[#if ERR_MESG#] style="color:red;font-weight:bold"[#endif#]>
+ text msg:
+ (*)
+ </label>
+ <div class="controls"><input type="text" name="mesg" value="[#MESG#]" class="input form-control"></div>
+</div>
+
+<div class="form-group">
+<div class="controls">
+
+<button type="submit" name="subm" value="<#LANG_SUBMIT#>" class="btn btn-defaul btn-primary"><#LANG_SEND#></button>
+<input type="hidden" name="id" value="<#ID#>">
+<input type="hidden" name="view_mode" value="<#VIEW_MODE#>">
+<input type="hidden" name="edit_mode" value="<#EDIT_MODE#>">
+<input type="hidden" name="mode" value="send">
+<input type="hidden" name="data_source" value="<#DATA_SOURCE#>">
+</div></div>
+</fieldset>
+</form>
