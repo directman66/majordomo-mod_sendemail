@@ -17,7 +17,7 @@ class mod_sendemail extends module {
 */
 function mod_sendemail() {
   $this->name="mod_sendemail";
-  $this->title="mod_sendemail";
+  $this->title="sendemail";
   $this->module_category="<#LANG_SECTION_SETTINGS#>";
   $this->checkInstalled();
 }
