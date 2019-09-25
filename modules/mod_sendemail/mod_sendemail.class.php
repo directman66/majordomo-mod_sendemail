@@ -133,6 +133,22 @@ function admin(&$out) {
 
 
 
+
+ $out['FROM']=$this->config['FROM'];			
+ $out['FROMFIO']=$this->config['FROMFIO'];			
+ $out['PORT']=$this->config['PORT'];			
+ $out['SSL']=$this->config['SSL'];			
+ $out['TO']=$this->config['TO'];			
+ $out['SMTPSERVER']=$this->config['SMTPSERVER'];			
+ $out['MESG']=$this->config['MESG'];			
+ $out['SMTPLOGIN']=$this->config['SMTPLOGIN'];			
+ $out['SMTPLOGIN']=$this->config['SMTPLOGIN'];			
+ $out['SMTPPWD']=$this->config['SMTPPWD'];			
+ $out['SUBJECT']=$this->config['SUBJECT'];			
+ $out['RESULT']=$this->config['RESULT'];			
+
+
+
  
 
 
@@ -143,24 +159,66 @@ function admin(&$out) {
 
 }
  
- 
- if ($this->view_mode=='update_settings') {
-	global $srv_name;
-	$this->config['SRV_NAME']=$srv_name;	 
 
-	global $api_server;
-	$this->config['API_SERVER']=$api_server;	 
+ if ($this->view_mode=='sendmsg') {
+	global $smtrserver;
+	global $to;
+	$this->config['TO']=$to;	 
 
-	global $api_port;
-	$this->config['API_PORT']=$api_port;	 
+	global $mesg;
+	$this->config['MESG']=$mesg;
 
-	global $api_mac;
-	$this->config['API_MAC']=$api_mac;
+	global $subject;
+	$this->config['SUBJECT']=$subject;
+	$this->config['RESULT']='';
 
-	global $every;
-	$this->config['EVERY']=$every;
    
    $this->saveConfig();
+
+
+if    ($mesg) {$this->sendsmtp($to, $mesg, $subject);}
+
+
+   $this->redirect("?");
+ }
+
+ 
+ if ($this->view_mode=='update_settings') {
+	global $smtrserver;
+	$this->config['SMTPSERVER']=$smtrserver;	 
+
+	global $from;
+	$this->config['FROM']=$from;	 
+
+	global $fromfio;
+	$this->config['FROMFIO']=$fromfio;	 
+
+
+	global $port;
+	$this->config['PORT']=$port;	 
+
+	global $ssl;
+	$this->config['SSL']=$ssl;	 
+
+	global $to;
+	$this->config['TO']=$to;	 
+
+	global $mesg;
+	$this->config['MESG']=$mesg;
+
+	global $smtplogin;
+	$this->config['SMTPLOGIN']=$smtplogin;
+
+	global $smtppwd;
+	$this->config['SMTPPWD']=$smtppwd;
+
+	global $subject;
+	$this->config['SUBJECT']=$subject;
+
+   
+   $this->saveConfig();
+
+
    $this->redirect("?");
  }
  if (isset($this->data_source) && !$_GET['data_source'] && !$_POST['data_source']) {
@@ -177,6 +235,75 @@ if ($this->tab=='' || $this->tab=='indata') {
  }
 
 	
+}
+
+
+function sendsmtp($to, $msg, $subject) {
+
+ $this->getConfig();
+ $from=$this->config['FROM'];			
+ $port=$this->config['PORT'];			
+ $ssl=$this->config['SSL'];			
+ $fromfio=$this->config['FROMFIO'];			
+ $smtpserver=$this->config['SMTPSERVER'];			
+ $smtplogin=$this->config['SMTPLOGIN'];			
+ $smtppwd=$this->config['SMTPPWD'];			
+
+
+
+
+//require_once "SendMailSmtpClass.php"; // подключаем класс
+//https://github.com/Ipatov/SendMailSmtpClass
+require_once(DIR_MODULES . $this->name . '/SendMailSmtpClass.php');
+
+	// $mailSMTP = new SendMailSmtpClass('zhenikipatov@yandex.ru', '***', 'ssl://smtp.yandex.ru', 465, "UTF-8");
+	// $mailSMTP = new SendMailSmtpClass('zhenikipatov@yandex.ru', '***', 'ssl://smtp.yandex.ru', 465, "windows-1251");
+	// $mailSMTP = new SendMailSmtpClass('monitor.test@mail.ru', '***', 'ssl://smtp.mail.ru', 465, "UTF-8");
+	// $mailSMTP = new SendMailSmtpClass('red@mega-dev.ru', '***', 'ssl://smtp.beget.com', 465, "UTF-8");
+	// $mailSMTP = new SendMailSmtpClass('red@mega-dev.ru', '***', 'smtp.beget.com', 2525, "windows-1251");
+	// $mailSMTP = new SendMailSmtpClass('red@mega-dev.ru', '***', 'ssl://smtp.beget.com', 465, "utf-8");
+        // $mailSMTP = new SendMailSmtpClass('red@mega-dev.ru', '***', 'smtp.beget.com', 2525, "utf-8");
+	// $mailSMTP = new SendMailSmtpClass('логин', 'пароль', 'хост', 'порт', 'кодировка письма');
+
+if ($ssl=='1')	{
+debmes('используем ssl', 'mod_sendemail');
+$mailSMTP = new SendMailSmtpClass($smtplogin, $smtppwd, 'ssl://'.$smtpserver, $port, "utf-8");} 
+else  {
+debmes('не используем ssl', 'mod_sendemail');
+$mailSMTP = new SendMailSmtpClass($smtplogin, $smtppwd, $smtpserver, $port, "utf-8");} 
+
+
+	// от кого
+	$from = array(
+		$fromfio, // Имя отправителя
+		$from // почта отправителя
+	);
+	// кому отправка. Можно указывать несколько получателей через запятую
+
+	
+	// добавляем файлы
+//	$mailSMTP->addFile("test.jpg");
+//	$mailSMTP->addFile("test2.jpg");
+//	$mailSMTP->addFile("test3.txt");
+	
+debmes('отправляем письмо '.$to, 'mod_sendemail');
+
+	// отправляем письмо
+	$result =  $mailSMTP->send($to, $subject, $msg, $from); 
+	// $result =  $mailSMTP->send('Кому письмо', 'Тема письма', 'Текст письма', 'Отправитель письма');
+	
+	if($result === true){
+$res= "Done";
+	}else{
+$res= "Error: " . $result;
+	}
+debmes($out['RUSULT'], 'mod_sendemail');
+$this->config['RESULT']=$res;
+$this->saveConfig();
+echo $res;
+
+
+
 }
 /**
 * FrontEnd
