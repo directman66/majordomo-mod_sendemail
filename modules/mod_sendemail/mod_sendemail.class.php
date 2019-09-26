@@ -146,15 +146,40 @@ function admin(&$out) {
  $out['SMTPPWD']=$this->config['SMTPPWD'];			
  $out['SUBJECT']=$this->config['SUBJECT'];			
  $out['RESULT']=$this->config['RESULT'];			
+ $out['TO2']=$this->config['TO2'];			
+ $out['MSGLEVEL']=$this->config['MSGLEVEL'];			
+ $out['SUBSCRSUBJECT']=$this->config['SUBSCRSUBJECT'];			
 
 
 
  
 
 
+debmes($this->view_mode, 'mod_sendemail');
+ if ($this->view_mode=='subscribe') {
+	global $to2;
+	global $msglevel;
+	global $subscrsub;
 
- if ($this->view_mode=='get_content') {
 
+
+	$this->config['TO2']=$to2;	 
+	$this->config['MSGLEVEL']=$msglevel;	 
+	$this->config['SUBSCRSUBJECT']=$subscrsub;	 
+
+        $this->saveConfig();
+
+
+	subscribeToEvent($this->name, 'SAY', '', $msglevel);
+	subscribeToEvent($this->name, 'SAYTO', '', $msglevel);
+	subscribeToEvent($this->name, 'SAYREPLY', '', $msglevel);
+        debmes('subsribed', 'mod_sendemail');
+}
+
+ if ($this->view_mode=='unsubscribe') {
+        unsubscribeFromEvent($this->name, 'SAY'); 
+        unsubscribeFromEvent($this->name, 'SAYTO'); 
+        unsubscribeFromEvent($this->name, 'SAYREPLY'); 
 
 
 }
@@ -238,7 +263,34 @@ if ($this->tab=='' || $this->tab=='indata') {
 }
 
 
-function sendsmtp($to, $msg, $subject) {
+ function processSubscription($event, &$details) {
+  $this->getConfig();
+  debmes('processSubscription', 'mod_sendemail');
+  debmes($event, 'mod_sendemail');
+  debmes($details, 'mod_sendemail');
+ $to2=$this->config['TO2'];			
+ $msglevel=$this->config['MSGLEVEL'];			
+ $subject=$this->config['SUBSCRSUBJECT'];			
+
+
+            $level = $details['level'];
+            $message = $details['message'];
+
+
+
+
+
+if    ($msglevel<=$level) {
+$res=$this->sendsmtp($to2, $message, $subject);
+debmes('message to '.$to2.' '.$res , 'mod_sendemail');
+} else 
+{
+debmes('message to no need '.$msglevel.'>'.$level , 'mod_sendemail');
+}
+
+}
+
+function sendsmtp($to, $msg, $subject, $attach='0') {
 
  $this->getConfig();
  $from=$this->config['FROM'];			
@@ -285,6 +337,8 @@ $mailSMTP = new SendMailSmtpClass($smtplogin, $smtppwd, $smtpserver, $port, "utf
 //	$mailSMTP->addFile("test.jpg");
 //	$mailSMTP->addFile("test2.jpg");
 //	$mailSMTP->addFile("test3.txt");
+if ($attach<>'0') {$mailSMTP->addFile($attach);}
+
 	
 debmes('отправляем письмо '.$to, 'mod_sendemail');
 
